@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Finanzas_personales</string>
+    <string name="crear_cuenta">Crear cuenta</string>
+    <string name="email">Email</string>
+    <string name="Password">Password</string>
+    <string name="iniciar_sesion">Iniciar sesión</string>
+    <string name="verificar_email">Verificar email</string>
+    <string name="registrarme">Registrarme</string>
+    <string name="repetir_Password">Repetir Password</string>
 </resources>
