@@ -31,12 +31,18 @@ class RegisterActivity : AppCompatActivity() {
 
             Firebase.auth.createUserWithEmailAndPassword(email, p1)
                 .addOnSuccessListener {
-                    // Pasar a completar datos del perfil
+                    // Ir a completar datos del perfil
                     startActivity(Intent(this, ProfileSetupActivity::class.java))
                     finish()
                 }
                 .addOnFailureListener { toast(it.message ?: "No se pudo crear la cuenta") }
+
+
+
+
         }
+
+        b.btnBack.setOnClickListener { finish() }
     }
 
     private fun toast(msg: String) =

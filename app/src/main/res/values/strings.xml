@@ -7,4 +7,18 @@
     <string name="verificar_email">Verificar email</string>
     <string name="registrarme">Registrarme</string>
     <string name="repetir_Password">Repetir Password</string>
+    <string name="menu_principal">Menú principal</string>
+    <string name="ingresos">Ingresos</string>
+    <string name="gastos">Gastos</string>
+    <string name="movimientos">Movimientos</string>
+    <string name="reportes">Reportes</string>
+    <string name="configuracion">Configuración</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="atras">Átras</string>
+    <string name="configurar_perfil">Configurar perfil</string>
+    <string name="nombre">Nombre</string>
+    <string name="apellido">Apellido</string>
+    <string name="guardar">Guardar</string>
+    <string name="Inicio">Inicio</string>
+    <string name="calculo_mensual">Cálculo Mensual</string>
 </resources>

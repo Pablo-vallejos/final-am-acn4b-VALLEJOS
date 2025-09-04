@@ -17,7 +17,7 @@ class LoginActivity : AppCompatActivity() {
         b = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        // Mensaje “flash” opcional (cuando volvemos del registro/perfil)
+        // Mensaje opcional cuando volvemos del registro/perfil
         intent.getStringExtra("flash")?.let { toast(it) }
 
         b.btnLogin.setOnClickListener {
@@ -48,9 +48,10 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Auto-skip: si ya hay sesión y está verificada, saltar Login
-        val u = Firebase.auth.currentUser
-        if (u?.isEmailVerified == true) goToMenu()
+        // Auto-skip si ya hay sesión verificada
+        Firebase.auth.currentUser?.let { u ->
+            if (u.isEmailVerified) goToMenu()
+        }
     }
 
     private fun goToMenu() {

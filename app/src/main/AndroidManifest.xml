@@ -13,6 +13,7 @@
         android:theme="@style/Theme.Finanzas_personales">
         <activity android:name=".RegisterActivity" />
         <activity android:name=".MenuActivity" />
+        <activity android:name=".ProfileSetupActivity" />
         <activity android:name=".LoginActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
