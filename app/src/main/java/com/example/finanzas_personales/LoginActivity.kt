@@ -17,7 +17,6 @@ class LoginActivity : AppCompatActivity() {
         b = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        // Mensaje opcional cuando volvemos del registro/perfil
         intent.getStringExtra("flash")?.let { toast(it) }
 
         b.btnLogin.setOnClickListener {
@@ -29,15 +28,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             Firebase.auth.signInWithEmailAndPassword(email, pass)
-                .addOnSuccessListener {
-                    val u = Firebase.auth.currentUser
-                    if (u?.isEmailVerified == true) {
-                        goToMenu()
-                    } else {
-                        toast("Tu email no está verificado. Revisá tu correo y volvé a iniciar sesión.")
-                        Firebase.auth.signOut()
-                    }
-                }
+                .addOnSuccessListener { goToMenu() }  // ✅ sin chequeo de verificación
                 .addOnFailureListener { toast(it.message ?: "Error al iniciar sesión") }
         }
 
@@ -48,10 +39,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Auto-skip si ya hay sesión verificada
-        Firebase.auth.currentUser?.let { u ->
-            if (u.isEmailVerified) goToMenu()
-        }
+        // ✅ Auto-skip si ya hay sesión (sin exigir verificación)
+        Firebase.auth.currentUser?.let { goToMenu() }
     }
 
     private fun goToMenu() {

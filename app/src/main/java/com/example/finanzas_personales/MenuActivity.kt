@@ -2,6 +2,7 @@ package com.example.finanzas_personales
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.finanzas_personales.databinding.ActivityMenuBinding
@@ -17,20 +18,21 @@ class MenuActivity : AppCompatActivity() {
         b = ActivityMenuBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        // Guardas de seguridad: exigir sesión + email verificado
-        val u = Firebase.auth.currentUser
-        if (u == null || !u.isEmailVerified) {
-            goToLogin()
-            return
+        // ✅ Solo chequeo de sesión (sin isEmailVerified)
+        if (Firebase.auth.currentUser == null) {
+            goToLogin(); return
         }
 
-        // Clicks de menú (por ahora solo Toast; reemplazá por startActivity)
-        b.btnIngresos.setOnClickListener { toast("Abrir Ingresos") /* startActivity(Intent(this, IngresosActivity::class.java)) */ }
-        b.btnGastos.setOnClickListener { toast("Abrir Gastos") /* startActivity(Intent(this, GastosActivity::class.java)) */ }
-        b.btnMovimientos.setOnClickListener { toast("Abrir Movimientos") /* startActivity(Intent(this, MovimientosActivity::class.java)) */ }
-        b.btnReportes.setOnClickListener { toast("Abrir Reportes") /* startActivity(Intent(this, ReportesActivity::class.java)) */ }
-        b.btnConfiguracion.setOnClickListener { toast("Abrir Configuración") /* startActivity(Intent(this, SettingsActivity::class.java)) */ }
+        // Ocultos por ahora
+        b.btnIngresos.visibility = View.GONE
+        b.btnGastos.visibility = View.GONE
+        b.btnReportes.visibility = View.GONE
 
+        // Activos
+        b.btnMovimientos.setOnClickListener { toast("Abrir Cálculo Mensual") }
+        b.btnConfiguracion.setOnClickListener {
+            startActivity(Intent(this, ProfileSetupActivity::class.java))
+        }
         b.btnLogout.setOnClickListener {
             Firebase.auth.signOut()
             goToLogin(clearStack = true)
@@ -39,9 +41,7 @@ class MenuActivity : AppCompatActivity() {
 
     private fun goToLogin(clearStack: Boolean = false) {
         val i = Intent(this, LoginActivity::class.java)
-        if (clearStack) {
-            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        if (clearStack) i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(i)
         finish()
     }
