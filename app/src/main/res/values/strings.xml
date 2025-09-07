@@ -21,4 +21,11 @@
     <string name="guardar">Guardar</string>
     <string name="Inicio">Inicio</string>
     <string name="calculo_mensual">Cálculo Mensual</string>
+    <string name="cantidad_personas">cantidad personas</string>
+    <string name="porcentaje_dividir">porcentaje a dividir</string>
+    <string name="gastos_totales">gastos totales\n</string>
+    <string name="ingresos_totales">ingresos totales\n</string>
+    <string name="total_por_persona">total por persona</string>
+    <string name="calcular">calcular</string>
+    <string name="limpiar">limpiar</string>
 </resources>

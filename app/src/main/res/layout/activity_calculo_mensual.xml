@@ -83,18 +83,19 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Botón Calcular (mismo formato que usás en toda la app) -->
+
     <Button
         android:id="@+id/btnCalcular"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/calcular"
-        app:layout_constraintTop_toBottomOf="@id/tvTotal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTotal"
+        app:layout_constraintVertical_bias="0.595" />
 
     <Button
         android:id="@+id/btnLimpiar"
@@ -102,11 +103,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="@string/limpiar"
-        app:layout_constraintTop_toBottomOf="@id/btnCalcular"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnCalcular"
+        app:layout_constraintVertical_bias="0.473" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

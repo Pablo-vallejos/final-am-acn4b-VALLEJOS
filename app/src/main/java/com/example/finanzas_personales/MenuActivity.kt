@@ -29,7 +29,9 @@ class MenuActivity : AppCompatActivity() {
         b.btnReportes.visibility = View.GONE
 
         // Activos
-        b.btnMovimientos.setOnClickListener { toast("Abrir Cálculo Mensual") }
+        b.btnMovimientos.setOnClickListener {
+            startActivity(Intent(this, CalculoMensualActivity::class.java))
+        }
         b.btnConfiguracion.setOnClickListener {
             startActivity(Intent(this, ProfileSetupActivity::class.java))
         }
