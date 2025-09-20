@@ -26,25 +26,40 @@ class CalculoMensualActivity : AppCompatActivity() {
     }
 
     private fun calcular() {
-        val personas = b.etPersonas.text.toString().toIntOrNull()
+        val personas   = b.etPersonas.text.toString().toIntOrNull()
         val porcentaje = b.etPorcentaje.text.toString().replace(",", ".").toDoubleOrNull()
-        val gastos = b.etGastos.text.toString().replace(",", ".").toDoubleOrNull()
-        val ingresos = b.etIngresos.text.toString().replace(",", ".").toDoubleOrNull()
+        val gastos     = b.etGastos.text.toString().replace(",", ".").toDoubleOrNull()
+        val ingresos   = b.etIngresos.text.toString().replace(",", ".").toDoubleOrNull()
 
+        // Validaciones
         if (personas == null || personas <= 0) { toast("Ingresá cantidad de personas (>0)"); return }
-        if (porcentaje == null || porcentaje < 0) { toast("Ingresá el porcentaje a dividir"); return }
-        if (gastos == null || gastos < 0) { toast("Ingresá los gastos"); return }
-        if (ingresos == null || ingresos < 0) { toast("Ingresá los ingresos"); return }
+        if (porcentaje == null || porcentaje < 0) { toast("Ingresá el porcentaje"); return }
+        if (gastos == null || gastos < 0)         { toast("Ingresá los gastos"); return }
+        if (ingresos == null || ingresos < 0)     { toast("Ingresá los ingresos"); return }
 
-        // Lógica:
-        // 1) Neto a cubrir = max(gastos - ingresos, 0)
-        // 2) Monto a dividir = neto * (porcentaje / 100)
-        // 3) Total por persona = monto / personas
-        val neto = max(gastos - ingresos, 0.0)
-        val montoADividir = neto * (porcentaje / 100.0)
-        val porPersona = if (personas > 0) montoADividir / personas else 0.0
+        // Total base a repartir: neto (ingresos - gastos). Si queda negativo, 0.
+        // Si querés usar SOLO ingresos, reemplazá la línea de abajo por: val totalBase = ingresos
+        val totalBase = max(ingresos - gastos, 0.0)
 
-        b.tvTotal.text = String.format("%.2f", porPersona)
+        val p = porcentaje.coerceIn(0.0, 100.0)
+
+        if (personas == 1) {
+            b.tvTotal.text = "Persona 1: ${"%.2f".format(totalBase)}"
+            return
+        }
+
+        // Persona 1 recibe p%; el resto (100-p)% se reparte entre (personas-1)
+        val persona1 = totalBase * (p / 100.0)
+        val resto = totalBase - persona1
+        val otros = personas - 1
+        val cadaUnoResto = if (otros > 0) resto / otros else 0.0
+
+        val sb = StringBuilder()
+        sb.append("Persona 1: ").append("%.2f".format(persona1))
+        for (i in 2..personas) {
+            sb.append("\nPersona ").append(i).append(": ").append("%.2f".format(cadaUnoResto))
+        }
+        b.tvTotal.text = sb.toString()
     }
 
     private fun toast(msg: String) =
