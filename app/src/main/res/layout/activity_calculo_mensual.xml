@@ -27,16 +27,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/etPorcentaje"
+    <!-- Bloque porcentajes dinámicos -->
+    <LinearLayout
+        android:id="@+id/boxPorcentajes"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:hint="@string/porcentaje_dividir"
-        android:inputType="numberDecimal"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/etPersonas"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btnGenerarPorcentajes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/generar_porcentajes" />
+
+        <TextView
+            android:id="@+id/tvHintSum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/hint_sumar_100" />
+
+        <!-- Aquí se agregan los EditText de % por persona -->
+        <LinearLayout
+            android:id="@+id/containerPorcentajes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
 
     <EditText
         android:id="@+id/etGastos"
@@ -45,7 +67,7 @@
         android:layout_marginTop="12dp"
         android:hint="@string/gastos_totales"
         android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/etPorcentaje"
+        app:layout_constraintTop_toBottomOf="@id/boxPorcentajes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -75,16 +97,13 @@
         android:id="@+id/tvTotal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:minLines="2"
         android:padding="12dp"
         android:text="—"
         android:textSize="18sp"
-        android:minLines="2"
-        android:gravity="start"
         app:layout_constraintTop_toBottomOf="@id/tvLabelTotal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Botón Calcular (mismo formato que usás en toda la app) -->
 
     <Button
         android:id="@+id/btnCalcular"
@@ -92,12 +111,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/calcular"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTotal"
-        app:layout_constraintVertical_bias="0.595" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btnLimpiar"
@@ -105,11 +121,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:text="@string/limpiar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btnCalcular"
-        app:layout_constraintVertical_bias="0.473" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

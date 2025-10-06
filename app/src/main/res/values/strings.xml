@@ -28,4 +28,6 @@
     <string name="total_por_persona">total por persona</string>
     <string name="calcular">calcular</string>
     <string name="limpiar">limpiar</string>
+    <string name="generar_porcentajes">generar porcentajes</string>
+    <string name="hint_sumar_100">Los porcentajes deben sumar 100</string>
 </resources>
