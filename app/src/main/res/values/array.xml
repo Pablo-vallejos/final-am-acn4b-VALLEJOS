@@ -3,5 +3,6 @@
     <string-array name="currencies">
         <item>ARS</item>
         <item>USD</item>
+        <item>EUR</item>
     </string-array>
 </resources>

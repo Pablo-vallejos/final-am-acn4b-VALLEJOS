@@ -12,6 +12,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.finanzas_personales.databinding.ActivityCalculoMensualBinding
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.round
@@ -22,20 +28,73 @@ class CalculoMensualActivity : AppCompatActivity() {
     private val percentEdits = mutableListOf<EditText>()   // EditText de % por persona
     private val EPS = 0.01                                 // tolerancia para comparaciones
 
+    // --- Moneda por defecto ---
+    private var currencyCode   = "ARS"   // fallback si no hay perfil
+    private var currencySymbol = "$"     // fallback
+    private val moneyFmt by lazy {
+        DecimalFormat("#,##0.00", DecimalFormatSymbols(Locale("es", "AR")).apply {
+            decimalSeparator = ','
+            groupingSeparator = '.'
+        })
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         b = ActivityCalculoMensualBinding.inflate(layoutInflater)
         setContentView(b.root)
 
+        // Cargar moneda del perfil y aplicarla en UI
+        loadCurrency()
+
         b.btnGenerarPorcentajes.setOnClickListener { generarCampos() }
         b.btnCalcular.setOnClickListener { calcular() }
         b.btnLimpiar.setOnClickListener { limpiar() }
+        b.btnBack.setOnClickListener {onBackPressedDispatcher.onBackPressed() }
     }
+
+    // -------------------- Moneda --------------------
+
+    /** Lee users/{uid}.currency y actualiza UI (si falla, mantiene fallback). */
+    private fun loadCurrency() {
+        val uid = Firebase.auth.uid ?: run {
+            applyCurrencyUI(); return
+        }
+        Firebase.firestore.collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                currencyCode   = doc.getString("currency") ?: "ARS"
+                currencySymbol = symbolFor(currencyCode)
+                applyCurrencyUI()
+            }
+            .addOnFailureListener {
+                applyCurrencyUI()
+            }
+    }
+
+    /** Aplica símbolo y code en los controles de pantalla. */
+    private fun applyCurrencyUI() {
+        // badge bajo el título
+        b.tvCurrency.text = "Moneda: $currencyCode ($currencySymbol)"
+
+        // hints con símbolo
+        b.etGastos.hint   = "Gastos ($currencySymbol)"
+        b.etIngresos.hint = "Ingresos ($currencySymbol)"
+
+        // etiqueta del total con símbolo
+        b.tvLabelTotal.text = "Total por persona ($currencySymbol)"
+    }
+
+    /** Intenta devolver el símbolo para el código; si no, devuelve el code. */
+    private fun symbolFor(code: String): String = try {
+        java.util.Currency.getInstance(code).getSymbol(Locale("es", "AR"))
+    } catch (_: Exception) { code }
+
+    // -------------------- Lógica de porcentajes/cálculo --------------------
 
     /** Genera N EditText de % según la cantidad de personas */
     private fun generarCampos() {
         val n = b.etPersonas.text.toString().toIntOrNull()
-        if (n == null || n <= 0) { toast("Ingresá cantidad de personas (>0)"); return }
+        if (n == null || n <= 0) { toast("Ingresá cantidad de personas mayor a 0"); return }
         if (n > 30) { toast("Máximo 30 personas"); return }
 
         percentEdits.clear()
@@ -79,27 +138,34 @@ class CalculoMensualActivity : AppCompatActivity() {
         val gastos   = b.etGastos.text.toString().replace(",", ".").toDoubleOrNull()
         val ingresos = b.etIngresos.text.toString().replace(",", ".").toDoubleOrNull()
 
-        if (personas == null || personas <= 0) { toast("Ingresá cantidad de personas (>0)"); return }
+        if (personas == null || personas <= 0) { toast("Ingresá cantidad de personas mayor a 0"); return }
         if (gastos == null || gastos < 0)       { toast("Ingresá los gastos"); return }
         if (ingresos == null || ingresos < 0)   { toast("Ingresá los ingresos"); return }
         if (percentEdits.isEmpty())             { toast("Generá los porcentajes primero"); return }
-        if (percentEdits.size != personas)      { toast("Volvé a generar los porcentajes (cambió la cantidad)"); return }
+        if (percentEdits.size != personas)      { toast("Volvé a generar los porcentajes"); return }
 
         val porcentajes = leerPorcentajes() ?: return
         val suma = porcentajes.sum()
 
-        if (suma > 100.0 + EPS) {                      // ← regla pedida
-            toast("La suma de porcentajes debe ser menor o igual a 100 (actual: %.2f)".format(suma))
+        if (suma > 100.0 + EPS) {
+            toast("La suma de porcentajes debe ser igual a 100 (actual: %.2f)".format(suma))
             return
         }
 
-        // Base de reparto
-        val totalBase = max(ingresos - gastos, 0.0)    // si querés usar solo ingresos: val totalBase = ingresos
+        if (suma < 100.0 + EPS) {
+            toast("La suma de porcentajes debe ser igual a 100 (actual: %.2f)".format(suma))
+            return
+        }
+
+        // Base de reparto (si preferís solo ingresos: val totalBase = ingresos)
+        val totalBase = max(ingresos - gastos, 0.0)
 
         val sb = StringBuilder()
         porcentajes.forEachIndexed { i, p ->
             val monto = totalBase * (p / 100.0)
-            sb.append("Persona ${i + 1}: ").append("%.2f".format(monto))
+            sb.append("Persona ${i + 1}: ")
+                .append(currencySymbol).append(" ")
+                .append(moneyFmt.format(monto))
             if (i != porcentajes.lastIndex) sb.append("\n")
         }
         b.tvTotal.text = sb.toString()
@@ -125,16 +191,16 @@ class CalculoMensualActivity : AppCompatActivity() {
         return list
     }
 
-    /** Muestra la suma en vivo y colorea la pista. */
+    /** Suma en vivo y feedback visual. */
     private fun updateSumHint() {
         val sum = percentEdits.sumOf {
             it.text.toString().trim().replace(",", ".").toDoubleOrNull() ?: 0.0
         }
         b.btnCalcular.isEnabled = sum <= 100.0 + EPS
-        // Mensaje y color según condición
+
         when {
             sum > 100.0 + EPS -> {
-                b.tvHintSum.text = "La suma de porcentajes debe ser ≤ 100  •  Suma actual: %.2f%%".format(sum)
+                b.tvHintSum.text = "La suma de porcentajes debe ser menor o igual a 100  •  Suma actual: %.2f%%".format(sum)
                 b.tvHintSum.setTextColor(color(android.R.color.holo_red_dark))
             }
             abs(sum - 100.0) <= EPS -> {
@@ -157,7 +223,10 @@ class CalculoMensualActivity : AppCompatActivity() {
         b.containerPorcentajes.removeAllViews()
         b.tvHintSum.text = getString(R.string.hint_sumar_100)
         b.tvHintSum.setTextColor(color(android.R.color.secondary_text_dark))
+        // mantener hints con símbolo y tvCurrency como están
     }
+
+    // -------------------- Helpers --------------------
 
     private fun color(res: Int) = ContextCompat.getColor(this, res)
     private fun redondear2(x: Double) = round(x * 100.0) / 100.0

@@ -1,128 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/calculo_mensual"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/etPersonas"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/cantidad_personas"
-        android:inputType="number"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- Bloque porcentajes dinámicos -->
+    <!-- Contenedor vertical para todo el contenido -->
     <LinearLayout
-        android:id="@+id/boxPorcentajes"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/etPersonas"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:padding="16dp">
 
-        <Button
-            android:id="@+id/btnGenerarPorcentajes"
+        <!-- Título -->
+        <TextView
+            android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/generar_porcentajes" />
+            android:layout_marginTop="8dp"
+            android:text="@string/calculo_mensual"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Badge Moneda (opcional, si lo estás mostrando) -->
+        <TextView
+            android:id="@+id/tvCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="Moneda: EUR (EUR)"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple"
+            android:background="@android:color/darker_gray" />
+
+        <!-- Cantidad de personas -->
+        <EditText
+            android:id="@+id/etPersonas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/cantidad_personas"
+            android:inputType="number" />
+
+        <!-- Bloque porcentajes -->
+        <LinearLayout
+            android:id="@+id/boxPorcentajes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnGenerarPorcentajes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/generar_porcentajes" />
+
+            <TextView
+                android:id="@+id/tvHintSum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/hint_sumar_100" />
+
+            <!-- Aquí se agregan dinámicamente los EditText de % -->
+            <LinearLayout
+                android:id="@+id/containerPorcentajes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical" />
+        </LinearLayout>
+
+        <!-- Gastos -->
+        <EditText
+            android:id="@+id/etGastos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/gastos_totales"
+            android:inputType="numberDecimal" />
+
+        <!-- Ingresos -->
+        <EditText
+            android:id="@+id/etIngresos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="@string/ingresos_totales"
+            android:inputType="numberDecimal" />
+
+        <!-- Resultado -->
+        <TextView
+            android:id="@+id/tvLabelTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/total_por_persona"
+            android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvHintSum"
+            android:id="@+id/tvTotal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="@string/hint_sumar_100" />
+            android:minLines="2"
+            android:padding="12dp"
+            android:text="—"
+            android:textSize="18sp" />
 
-        <!-- Aquí se agregan los EditText de % por persona -->
-        <LinearLayout
-            android:id="@+id/containerPorcentajes"
+        <!-- Botones -->
+        <Button
+            android:id="@+id/btnCalcular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="16dp"
+            android:text="@string/calcular" />
+
+        <Button
+            android:id="@+id/btnLimpiar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/limpiar" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Atrás" />
+
     </LinearLayout>
-
-    <EditText
-        android:id="@+id/etGastos"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="@string/gastos_totales"
-        android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/boxPorcentajes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <EditText
-        android:id="@+id/etIngresos"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:hint="@string/ingresos_totales"
-        android:inputType="numberDecimal"
-        app:layout_constraintTop_toBottomOf="@id/etGastos"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tvLabelTotal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/total_por_persona"
-        android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/etIngresos"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/tvTotal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:minLines="2"
-        android:padding="12dp"
-        android:text="—"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/tvLabelTotal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/btnCalcular"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/calcular"
-        app:layout_constraintTop_toBottomOf="@id/tvTotal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/btnLimpiar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/limpiar"
-        app:layout_constraintTop_toBottomOf="@id/btnCalcular"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
